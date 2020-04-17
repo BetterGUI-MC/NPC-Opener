@@ -2,6 +2,7 @@ package me.hsgamer.bettergui.npcopener;
 
 import static me.hsgamer.bettergui.BetterGUI.getInstance;
 
+import java.util.Map;
 import java.util.Optional;
 import me.hsgamer.bettergui.config.impl.MessageConfig.DefaultMessage;
 import me.hsgamer.bettergui.util.CommonUtils;
@@ -17,12 +18,14 @@ public class NPCListener implements Listener {
   public void onLeftClick(NPCLeftClickEvent event) {
     Player player = event.getClicker();
     int id = event.getNPC().getId();
-    Optional<String> optional = Main.getStorage().getLeftMenu(id);
+    Optional<Map.Entry<InteractiveNPC, String>> optional = Main.getStorage().getLeftMenu(id);
     if (optional.isPresent()) {
-      String menu = optional.get();
+      Map.Entry<InteractiveNPC, String> entry = optional.get();
+      String menu = entry.getValue();
       if (getInstance().getMenuManager().contains(menu)) {
         event.setCancelled(true);
-        getInstance().getMenuManager().openMenu(menu, player, false);
+        getInstance().getMenuManager()
+            .openMenu(menu, player, entry.getKey().getArgs().toArray(new String[0]), false);
       } else {
         CommonUtils.sendMessage(player,
             getInstance().getMessageConfig().get(DefaultMessage.MENU_NOT_FOUND));
@@ -34,12 +37,14 @@ public class NPCListener implements Listener {
   public void onRightClick(NPCRightClickEvent event) {
     Player player = event.getClicker();
     int id = event.getNPC().getId();
-    Optional<String> optional = Main.getStorage().getRightMenu(id);
+    Optional<Map.Entry<InteractiveNPC, String>> optional = Main.getStorage().getRightMenu(id);
     if (optional.isPresent()) {
-      String menu = optional.get();
+      Map.Entry<InteractiveNPC, String> entry = optional.get();
+      String menu = entry.getValue();
       if (getInstance().getMenuManager().contains(menu)) {
         event.setCancelled(true);
-        getInstance().getMenuManager().openMenu(menu, player, false);
+        getInstance().getMenuManager()
+            .openMenu(menu, player, entry.getKey().getArgs().toArray(new String[0]), false);
       } else {
         CommonUtils.sendMessage(player,
             getInstance().getMessageConfig().get(DefaultMessage.MENU_NOT_FOUND));

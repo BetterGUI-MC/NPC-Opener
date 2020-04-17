@@ -11,10 +11,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class NPCStorage {
 
-  private Map<Integer, String> idToLeftMenuMap = new HashMap<>();
-  private Map<Integer, String> idToRightMenuMap = new HashMap<>();
-  private Addon addon;
-  private FileConfiguration config;
+  private final Map<InteractiveNPC, String> npcToLeftMenuMap = new HashMap<>();
+  private final Map<InteractiveNPC, String> npcToRightMenuMap = new HashMap<>();
+  private final Addon addon;
+  private final FileConfiguration config;
 
   public NPCStorage(Addon addon) {
     this.addon = addon;
@@ -22,69 +22,72 @@ public class NPCStorage {
     load();
   }
 
+  @SuppressWarnings("unchecked")
   public void load() {
     if (config.isSet("left")) {
       ConfigurationSection section = config.getConfigurationSection("left");
       section.getKeys(false).forEach(
-          s -> config.getIntegerList(s).forEach(id -> idToLeftMenuMap.put(id, s + ".yml")));
+          s -> config.getMapList(s).forEach(map -> npcToLeftMenuMap.put(InteractiveNPC.deserialize(
+              (Map<String, Object>) map), s + ".yml")));
     }
     if (config.isSet("right")) {
       ConfigurationSection section = config.getConfigurationSection("right");
       section.getKeys(false).forEach(
-          s -> config.getIntegerList(s).forEach(id -> idToRightMenuMap.put(id, s + ".yml")));
+          s -> config.getMapList(s).forEach(map -> npcToRightMenuMap.put(InteractiveNPC.deserialize(
+              (Map<String, Object>) map), s + ".yml")));
     }
   }
 
   public void save() {
-    Map<String, List<Integer>> map = new HashMap<>();
-    idToLeftMenuMap.forEach((id, s) -> {
+    Map<String, List<Map<String, Object>>> map = new HashMap<>();
+    npcToLeftMenuMap.forEach((npc, s) -> {
       s = "left." + s.replace(".yml", "");
       map.putIfAbsent(s, new ArrayList<>());
-      map.get(s).add(id);
+      map.get(s).add(npc.serialize());
     });
-    idToRightMenuMap.forEach((id, s) -> {
+    npcToRightMenuMap.forEach((npc, s) -> {
       s = "right." + s.replace(".yml", "");
       map.putIfAbsent(s, new ArrayList<>());
-      map.get(s).add(id);
+      map.get(s).add(npc.serialize());
     });
     map.forEach(config::set);
     addon.saveConfig();
   }
 
-  public void set(int id, String menu, boolean leftClick, boolean rightClick) {
+  public void set(InteractiveNPC npc, String menu, boolean leftClick, boolean rightClick) {
     if (leftClick) {
-      idToLeftMenuMap.put(id, menu);
+      npcToLeftMenuMap.put(npc, menu);
     }
     if (rightClick) {
-      idToRightMenuMap.put(id, menu);
+      npcToRightMenuMap.put(npc, menu);
     }
   }
 
-  public void set(int id, String menu) {
-    set(id, menu, true, true);
+  public void set(InteractiveNPC npc, String menu) {
+    set(npc, menu, true, true);
   }
 
   public void remove(int id, boolean leftClick, boolean rightClick) {
     if (leftClick) {
-      idToLeftMenuMap.remove(id);
-      config.set("left." + id, null);
+      npcToLeftMenuMap.entrySet().removeIf(entry -> entry.getKey().getId() == id);
     }
     if (rightClick) {
-      idToRightMenuMap.remove(id);
-      config.set("right." + id, null);
+      npcToRightMenuMap.entrySet().removeIf(entry -> entry.getKey().getId() == id);
     }
-    addon.saveConfig();
+    save();
   }
 
   public void remove(int id) {
     remove(id, true, true);
   }
 
-  public Optional<String> getLeftMenu(int id) {
-    return Optional.ofNullable(idToLeftMenuMap.get(id));
+  public Optional<Map.Entry<InteractiveNPC, String>> getLeftMenu(int id) {
+    return npcToLeftMenuMap.entrySet().stream().filter(entry -> entry.getKey().getId() == id)
+        .findFirst();
   }
 
-  public Optional<String> getRightMenu(int id) {
-    return Optional.ofNullable(idToRightMenuMap.get(id));
+  public Optional<Map.Entry<InteractiveNPC, String>> getRightMenu(int id) {
+    return npcToRightMenuMap.entrySet().stream().filter(entry -> entry.getKey().getId() == id)
+        .findFirst();
   }
 }

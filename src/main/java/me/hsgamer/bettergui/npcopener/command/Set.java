@@ -4,9 +4,11 @@ import static me.hsgamer.bettergui.BetterGUI.getInstance;
 import static me.hsgamer.bettergui.npcopener.Main.getStorage;
 import static me.hsgamer.bettergui.util.CommonUtils.sendMessage;
 
+import java.util.Arrays;
 import java.util.Collections;
 import me.hsgamer.bettergui.Permissions;
 import me.hsgamer.bettergui.config.impl.MessageConfig.DefaultMessage;
+import me.hsgamer.bettergui.npcopener.InteractiveNPC;
 import me.hsgamer.bettergui.util.TestCase;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -22,7 +24,8 @@ public class Set extends BukkitCommand {
       .createPermission("bettergui.setnpcmenu", null, PermissionDefault.OP);
 
   public Set() {
-    super("setnpcmenu", "Bind a menu to an NPC", "/setnpcmenu <menu> [leftClick] [rightClick]",
+    super("setnpcmenu", "Bind a menu to an NPC",
+        "/setnpcmenu <menu> [leftClick] [rightClick] [args]",
         Collections.singletonList("snm"));
   }
 
@@ -46,12 +49,17 @@ public class Set extends BukkitCommand {
                         .setSuccessConsumer(commandSender -> {
                           NPC npc = CitizensAPI.getDefaultNPCSelector().getSelected(commandSender);
                           if (npc != null) {
-                            int id = npc.getId();
+                            InteractiveNPC interactiveNPC = new InteractiveNPC(npc.getId());
+                            if (args.length >= 4) {
+                              interactiveNPC
+                                  .setArgs(Arrays.asList(Arrays.copyOfRange(args, 3, args.length)));
+                            }
                             if (args.length >= 3) {
-                              getStorage().set(id, args[0], Boolean.parseBoolean(args[1]),
-                                  Boolean.parseBoolean(args[2]));
+                              getStorage()
+                                  .set(interactiveNPC, args[0], Boolean.parseBoolean(args[1]),
+                                      Boolean.parseBoolean(args[2]));
                             } else {
-                              getStorage().set(id, args[0]);
+                              getStorage().set(interactiveNPC, args[0]);
                             }
                             sendMessage(commandSender, getInstance().getMessageConfig()
                                 .get(DefaultMessage.SUCCESS));
