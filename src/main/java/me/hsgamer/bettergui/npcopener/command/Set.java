@@ -48,25 +48,31 @@ public class Set extends BukkitCommand {
     }
 
     NPC npc = CitizensAPI.getDefaultNPCSelector().getSelected(sender);
-    if (npc != null) {
-      InteractiveNPC interactiveNPC = new InteractiveNPC(npc.getId());
-      if (args.length >= 4) {
-        interactiveNPC.setArgs(Arrays.copyOfRange(args, 3, args.length));
-      }
-      if (args.length >= 3) {
-        getStorage()
-            .set(interactiveNPC, args[0], Boolean.parseBoolean(args[1]),
-                Boolean.parseBoolean(args[2]));
-      } else {
-        getStorage().set(interactiveNPC, args[0]);
-      }
-      sendMessage(sender, getInstance().getMessageConfig()
-          .get(DefaultMessage.SUCCESS));
-    } else {
+    if (npc == null) {
       sendMessage(sender, getInstance().getMessageConfig()
           .get(String.class, "npc-required", "&cYou need to select an NPC"));
       return false;
     }
+    if (getStorage().contains(npc.getId())) {
+      sendMessage(sender, getInstance().getMessageConfig()
+          .get(String.class, "npc-already-set", "&cThe NPC is already set"));
+      return false;
+    }
+
+    InteractiveNPC interactiveNPC = new InteractiveNPC(npc.getId());
+    if (args.length >= 4) {
+      interactiveNPC.setArgs(Arrays.copyOfRange(args, 3, args.length));
+    }
+    if (args.length >= 3) {
+      getStorage()
+          .set(interactiveNPC, args[0], Boolean.parseBoolean(args[1]),
+              Boolean.parseBoolean(args[2]));
+    } else {
+      getStorage().set(interactiveNPC, args[0]);
+    }
+    sendMessage(sender, getInstance().getMessageConfig()
+        .get(DefaultMessage.SUCCESS));
+
     return true;
   }
 }

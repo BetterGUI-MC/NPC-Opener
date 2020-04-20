@@ -85,6 +85,10 @@ public class NPCStorage {
     remove(id, true, true);
   }
 
+  public boolean contains(int id) {
+    return getLeftMenu(id).isPresent() || getRightMenu(id).isPresent();
+  }
+
   public Optional<Map.Entry<InteractiveNPC, String>> getLeftMenu(int id) {
     return npcToLeftMenuMap.entrySet().stream().filter(entry -> entry.getKey().getId() == id)
         .findFirst();

@@ -20,6 +20,8 @@ public final class Main extends Addon {
     registerListener(new NPCListener());
     getPlugin().getMessageConfig().getConfig()
         .addDefault("npc-required", "&cYou need to select an NPC");
+    getPlugin().getMessageConfig().getConfig()
+        .addDefault("npc-already-set", "&cThe NPC is already set");
     getPlugin().getMessageConfig().saveConfig();
     return true;
   }
