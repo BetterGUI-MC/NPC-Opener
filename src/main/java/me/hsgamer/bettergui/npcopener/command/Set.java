@@ -51,8 +51,7 @@ public class Set extends BukkitCommand {
     if (npc != null) {
       InteractiveNPC interactiveNPC = new InteractiveNPC(npc.getId());
       if (args.length >= 4) {
-        interactiveNPC
-            .setArgs(Arrays.asList(Arrays.copyOfRange(args, 3, args.length)));
+        interactiveNPC.setArgs(Arrays.copyOfRange(args, 3, args.length));
       }
       if (args.length >= 3) {
         getStorage()

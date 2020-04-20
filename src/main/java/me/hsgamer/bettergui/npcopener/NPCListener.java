@@ -25,7 +25,7 @@ public class NPCListener implements Listener {
       if (getInstance().getMenuManager().contains(menu)) {
         event.setCancelled(true);
         getInstance().getMenuManager()
-            .openMenu(menu, player, entry.getKey().getArgs().toArray(new String[0]), false);
+            .openMenu(menu, player, entry.getKey().getArgs(), false);
       } else {
         CommonUtils.sendMessage(player,
             getInstance().getMessageConfig().get(DefaultMessage.MENU_NOT_FOUND));
@@ -44,7 +44,7 @@ public class NPCListener implements Listener {
       if (getInstance().getMenuManager().contains(menu)) {
         event.setCancelled(true);
         getInstance().getMenuManager()
-            .openMenu(menu, player, entry.getKey().getArgs().toArray(new String[0]), false);
+            .openMenu(menu, player, entry.getKey().getArgs(), false);
       } else {
         CommonUtils.sendMessage(player,
             getInstance().getMessageConfig().get(DefaultMessage.MENU_NOT_FOUND));
