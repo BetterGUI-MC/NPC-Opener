@@ -24,14 +24,14 @@ public class NPCStorage {
     if (addon.getConfig().isSet("left")) {
       ConfigurationSection section = addon.getConfig().getConfigurationSection("left");
       section.getKeys(false).forEach(
-          s -> addon.getConfig().getMapList(s)
+          s -> section.getMapList(s)
               .forEach(map -> npcToLeftMenuMap.put(InteractiveNPC.deserialize(
                   (Map<String, Object>) map), s + ".yml")));
     }
     if (addon.getConfig().isSet("right")) {
       ConfigurationSection section = addon.getConfig().getConfigurationSection("right");
       section.getKeys(false).forEach(
-          s -> addon.getConfig().getMapList(s)
+          s -> section.getMapList(s)
               .forEach(map -> npcToRightMenuMap.put(InteractiveNPC.deserialize(
                   (Map<String, Object>) map), s + ".yml")));
     }
