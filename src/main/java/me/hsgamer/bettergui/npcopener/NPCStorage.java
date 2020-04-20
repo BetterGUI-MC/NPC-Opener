@@ -7,34 +7,33 @@ import java.util.Map;
 import java.util.Optional;
 import me.hsgamer.bettergui.object.addon.Addon;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 
 public class NPCStorage {
 
   private final Map<InteractiveNPC, String> npcToLeftMenuMap = new HashMap<>();
   private final Map<InteractiveNPC, String> npcToRightMenuMap = new HashMap<>();
   private final Addon addon;
-  private final FileConfiguration config;
 
   public NPCStorage(Addon addon) {
     this.addon = addon;
-    this.config = addon.getConfig();
     load();
   }
 
   @SuppressWarnings("unchecked")
   public void load() {
-    if (config.isSet("left")) {
-      ConfigurationSection section = config.getConfigurationSection("left");
+    if (addon.getConfig().isSet("left")) {
+      ConfigurationSection section = addon.getConfig().getConfigurationSection("left");
       section.getKeys(false).forEach(
-          s -> config.getMapList(s).forEach(map -> npcToLeftMenuMap.put(InteractiveNPC.deserialize(
-              (Map<String, Object>) map), s + ".yml")));
+          s -> addon.getConfig().getMapList(s)
+              .forEach(map -> npcToLeftMenuMap.put(InteractiveNPC.deserialize(
+                  (Map<String, Object>) map), s + ".yml")));
     }
-    if (config.isSet("right")) {
-      ConfigurationSection section = config.getConfigurationSection("right");
+    if (addon.getConfig().isSet("right")) {
+      ConfigurationSection section = addon.getConfig().getConfigurationSection("right");
       section.getKeys(false).forEach(
-          s -> config.getMapList(s).forEach(map -> npcToRightMenuMap.put(InteractiveNPC.deserialize(
-              (Map<String, Object>) map), s + ".yml")));
+          s -> addon.getConfig().getMapList(s)
+              .forEach(map -> npcToRightMenuMap.put(InteractiveNPC.deserialize(
+                  (Map<String, Object>) map), s + ".yml")));
     }
   }
 
@@ -50,7 +49,7 @@ public class NPCStorage {
       map.putIfAbsent(s, new ArrayList<>());
       map.get(s).add(npc.serialize());
     });
-    map.forEach(config::set);
+    map.forEach((s, list) -> addon.getConfig().set(s, list));
     addon.saveConfig();
   }
 
