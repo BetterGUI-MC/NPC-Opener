@@ -3,6 +3,7 @@ package me.hsgamer.bettergui.npcopener;
 import me.hsgamer.bettergui.npcopener.command.Remove;
 import me.hsgamer.bettergui.npcopener.command.Set;
 import me.hsgamer.bettergui.object.addon.Addon;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 public final class Main extends Addon {
 
@@ -14,6 +15,7 @@ public final class Main extends Addon {
 
   @Override
   public boolean onLoad() {
+    ConfigurationSerialization.registerClass(InteractiveNPC.class);
     setupConfig();
     registerListener(new NPCListener());
     getPlugin().getMessageConfig().getConfig()
