@@ -7,7 +7,6 @@ import static me.hsgamer.bettergui.util.CommonUtils.sendMessage;
 import java.util.Collections;
 import me.hsgamer.bettergui.Permissions;
 import me.hsgamer.bettergui.config.impl.MessageConfig.DefaultMessage;
-import me.hsgamer.bettergui.util.TestCase;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.command.CommandSender;
@@ -29,34 +28,33 @@ public class Remove extends BukkitCommand {
 
   @Override
   public boolean execute(CommandSender sender, String s, String[] args) {
-    return TestCase.create(sender)
-        .setPredicate(commandSender -> commandSender instanceof Player)
-        .setFailConsumer(commandSender ->
-            sendMessage(commandSender,
-                getInstance().getMessageConfig().get(DefaultMessage.PLAYER_ONLY)))
-        .setSuccessNextTestCase(
-            new TestCase<CommandSender>()
-                .setPredicate(commandSender -> commandSender.hasPermission(PERMISSION))
-                .setFailConsumer(commandSender -> sendMessage(commandSender,
-                    getInstance().getMessageConfig().get(DefaultMessage.NO_PERMISSION)))
-                .setSuccessConsumer(commandSender -> {
-                  NPC npc = CitizensAPI.getDefaultNPCSelector().getSelected(commandSender);
-                  if (npc != null) {
-                    int id = npc.getId();
-                    if (args.length >= 2) {
-                      getStorage().remove(id, Boolean.parseBoolean(args[0]),
-                          Boolean.parseBoolean(args[1]));
-                    } else {
-                      getStorage().remove(id);
-                    }
-                    sendMessage(commandSender, getInstance().getMessageConfig()
-                        .get(DefaultMessage.SUCCESS));
-                  } else {
-                    sendMessage(commandSender, getInstance().getMessageConfig()
-                        .get(String.class, "npc-required", "&cYou need to select an NPC"));
-                  }
-                })
-        )
-        .test();
+    if (!(sender instanceof Player)) {
+      sendMessage(sender,
+          getInstance().getMessageConfig().get(DefaultMessage.PLAYER_ONLY));
+      return false;
+    }
+    if (!sender.hasPermission(PERMISSION)) {
+      sendMessage(sender,
+          getInstance().getMessageConfig().get(DefaultMessage.NO_PERMISSION));
+      return false;
+    }
+
+    NPC npc = CitizensAPI.getDefaultNPCSelector().getSelected(sender);
+    if (npc != null) {
+      int id = npc.getId();
+      if (args.length >= 2) {
+        getStorage().remove(id, Boolean.parseBoolean(args[0]),
+            Boolean.parseBoolean(args[1]));
+      } else {
+        getStorage().remove(id);
+      }
+      sendMessage(sender, getInstance().getMessageConfig()
+          .get(DefaultMessage.SUCCESS));
+    } else {
+      sendMessage(sender, getInstance().getMessageConfig()
+          .get(String.class, "npc-required", "&cYou need to select an NPC"));
+      return false;
+    }
+    return true;
   }
 }

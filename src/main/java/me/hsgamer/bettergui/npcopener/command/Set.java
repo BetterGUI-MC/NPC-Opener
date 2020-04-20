@@ -9,7 +9,6 @@ import java.util.Collections;
 import me.hsgamer.bettergui.Permissions;
 import me.hsgamer.bettergui.config.impl.MessageConfig.DefaultMessage;
 import me.hsgamer.bettergui.npcopener.InteractiveNPC;
-import me.hsgamer.bettergui.util.TestCase;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.command.CommandSender;
@@ -31,45 +30,44 @@ public class Set extends BukkitCommand {
 
   @Override
   public boolean execute(CommandSender sender, String s, String[] args) {
-    return TestCase.create(sender)
-        .setPredicate(commandSender -> commandSender instanceof Player)
-        .setFailConsumer(commandSender ->
-            sendMessage(commandSender,
-                getInstance().getMessageConfig().get(DefaultMessage.PLAYER_ONLY)))
-        .setSuccessNextTestCase(
-            new TestCase<CommandSender>()
-                .setPredicate(commandSender -> commandSender.hasPermission(PERMISSION))
-                .setFailConsumer(commandSender -> sendMessage(commandSender,
-                    getInstance().getMessageConfig().get(DefaultMessage.NO_PERMISSION)))
-                .setSuccessNextTestCase(
-                    new TestCase<CommandSender>()
-                        .setPredicate(commandSender -> args.length > 0)
-                        .setFailConsumer(commandSender -> sendMessage(commandSender,
-                            getInstance().getMessageConfig().get(DefaultMessage.MENU_REQUIRED)))
-                        .setSuccessConsumer(commandSender -> {
-                          NPC npc = CitizensAPI.getDefaultNPCSelector().getSelected(commandSender);
-                          if (npc != null) {
-                            InteractiveNPC interactiveNPC = new InteractiveNPC(npc.getId());
-                            if (args.length >= 4) {
-                              interactiveNPC
-                                  .setArgs(Arrays.asList(Arrays.copyOfRange(args, 3, args.length)));
-                            }
-                            if (args.length >= 3) {
-                              getStorage()
-                                  .set(interactiveNPC, args[0], Boolean.parseBoolean(args[1]),
-                                      Boolean.parseBoolean(args[2]));
-                            } else {
-                              getStorage().set(interactiveNPC, args[0]);
-                            }
-                            sendMessage(commandSender, getInstance().getMessageConfig()
-                                .get(DefaultMessage.SUCCESS));
-                          } else {
-                            sendMessage(commandSender, getInstance().getMessageConfig()
-                                .get(String.class, "npc-required", "&cYou need to select an NPC"));
-                          }
-                        })
-                )
-        )
-        .test();
+    if (!(sender instanceof Player)) {
+      sendMessage(sender,
+          getInstance().getMessageConfig().get(DefaultMessage.PLAYER_ONLY));
+      return false;
+    }
+    if (!sender.hasPermission(PERMISSION)) {
+      sendMessage(sender,
+          getInstance().getMessageConfig().get(DefaultMessage.NO_PERMISSION));
+      return false;
+    }
+
+    if (args.length <= 0) {
+      sendMessage(sender,
+          getInstance().getMessageConfig().get(DefaultMessage.MENU_REQUIRED));
+      return false;
+    }
+
+    NPC npc = CitizensAPI.getDefaultNPCSelector().getSelected(sender);
+    if (npc != null) {
+      InteractiveNPC interactiveNPC = new InteractiveNPC(npc.getId());
+      if (args.length >= 4) {
+        interactiveNPC
+            .setArgs(Arrays.asList(Arrays.copyOfRange(args, 3, args.length)));
+      }
+      if (args.length >= 3) {
+        getStorage()
+            .set(interactiveNPC, args[0], Boolean.parseBoolean(args[1]),
+                Boolean.parseBoolean(args[2]));
+      } else {
+        getStorage().set(interactiveNPC, args[0]);
+      }
+      sendMessage(sender, getInstance().getMessageConfig()
+          .get(DefaultMessage.SUCCESS));
+    } else {
+      sendMessage(sender, getInstance().getMessageConfig()
+          .get(String.class, "npc-required", "&cYou need to select an NPC"));
+      return false;
+    }
+    return true;
   }
 }
