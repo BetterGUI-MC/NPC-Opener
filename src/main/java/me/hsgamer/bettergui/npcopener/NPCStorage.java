@@ -49,6 +49,10 @@ public class NPCStorage {
       map.putIfAbsent(s, new ArrayList<>());
       map.get(s).add(npc.serialize());
     });
+
+    // Clear old config
+    addon.getConfig().getKeys(false).forEach(s -> addon.getConfig().set(s, null));
+
     map.forEach((s, list) -> addon.getConfig().set(s, list));
     addon.saveConfig();
   }
@@ -73,7 +77,6 @@ public class NPCStorage {
     if (rightClick) {
       npcToRightMenuMap.entrySet().removeIf(entry -> entry.getKey().getId() == id);
     }
-    save();
   }
 
   public void remove(int id) {
