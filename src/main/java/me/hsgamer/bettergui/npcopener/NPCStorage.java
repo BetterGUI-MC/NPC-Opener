@@ -21,6 +21,8 @@ public class NPCStorage {
 
   @SuppressWarnings("unchecked")
   public void load() {
+    npcToLeftMenuMap.clear();
+    npcToRightMenuMap.clear();
     if (addon.getConfig().isSet("left")) {
       ConfigurationSection section = addon.getConfig().getConfigurationSection("left");
       section.getKeys(false).forEach(
