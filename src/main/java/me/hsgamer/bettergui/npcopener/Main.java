@@ -1,5 +1,6 @@
 package me.hsgamer.bettergui.npcopener;
 
+import me.hsgamer.bettergui.config.ConfigPath;
 import me.hsgamer.bettergui.npcopener.command.Remove;
 import me.hsgamer.bettergui.npcopener.command.Set;
 import me.hsgamer.bettergui.object.addon.Addon;
@@ -7,6 +8,10 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 public final class Main extends Addon {
 
+  public static final ConfigPath<String> NPC_REQUIRED = new ConfigPath<>(String.class,
+      "npc-required", "&cYou need to select an NPC");
+  public static final ConfigPath<String> NPC_ALREADY_SET = new ConfigPath<>(String.class,
+      "npc-already-set", "&cThe NPC is already set");
   private static NPCStorage storage;
 
   public static NPCStorage getStorage() {
@@ -18,10 +23,8 @@ public final class Main extends Addon {
     ConfigurationSerialization.registerClass(InteractiveNPC.class);
     setupConfig();
     registerListener(new NPCListener());
-    getPlugin().getMessageConfig().getConfig()
-        .addDefault("npc-required", "&cYou need to select an NPC");
-    getPlugin().getMessageConfig().getConfig()
-        .addDefault("npc-already-set", "&cThe NPC is already set");
+    NPC_REQUIRED.setConfig(getPlugin().getMessageConfig());
+    NPC_ALREADY_SET.setConfig(getPlugin().getMessageConfig());
     getPlugin().getMessageConfig().saveConfig();
     return true;
   }

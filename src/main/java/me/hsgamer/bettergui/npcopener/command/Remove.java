@@ -1,12 +1,12 @@
 package me.hsgamer.bettergui.npcopener.command;
 
-import static me.hsgamer.bettergui.BetterGUI.getInstance;
 import static me.hsgamer.bettergui.npcopener.Main.getStorage;
 import static me.hsgamer.bettergui.util.CommonUtils.sendMessage;
 
 import java.util.Collections;
 import me.hsgamer.bettergui.Permissions;
-import me.hsgamer.bettergui.config.impl.MessageConfig.DefaultMessage;
+import me.hsgamer.bettergui.config.impl.MessageConfig;
+import me.hsgamer.bettergui.npcopener.Main;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.command.CommandSender;
@@ -29,13 +29,11 @@ public class Remove extends BukkitCommand {
   @Override
   public boolean execute(CommandSender sender, String s, String[] args) {
     if (!(sender instanceof Player)) {
-      sendMessage(sender,
-          getInstance().getMessageConfig().get(DefaultMessage.PLAYER_ONLY));
+      sendMessage(sender, MessageConfig.PLAYER_ONLY.getValue());
       return false;
     }
     if (!sender.hasPermission(PERMISSION)) {
-      sendMessage(sender,
-          getInstance().getMessageConfig().get(DefaultMessage.NO_PERMISSION));
+      sendMessage(sender, MessageConfig.NO_PERMISSION.getValue());
       return false;
     }
 
@@ -48,11 +46,9 @@ public class Remove extends BukkitCommand {
       } else {
         getStorage().remove(id);
       }
-      sendMessage(sender, getInstance().getMessageConfig()
-          .get(DefaultMessage.SUCCESS));
+      sendMessage(sender, MessageConfig.SUCCESS.getValue());
     } else {
-      sendMessage(sender, getInstance().getMessageConfig()
-          .get(String.class, "npc-required", "&cYou need to select an NPC"));
+      sendMessage(sender, Main.NPC_REQUIRED.getValue());
       return false;
     }
     return true;

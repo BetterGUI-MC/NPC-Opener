@@ -1,14 +1,14 @@
 package me.hsgamer.bettergui.npcopener.command;
 
-import static me.hsgamer.bettergui.BetterGUI.getInstance;
 import static me.hsgamer.bettergui.npcopener.Main.getStorage;
 import static me.hsgamer.bettergui.util.CommonUtils.sendMessage;
 
 import java.util.Arrays;
 import java.util.Collections;
 import me.hsgamer.bettergui.Permissions;
-import me.hsgamer.bettergui.config.impl.MessageConfig.DefaultMessage;
+import me.hsgamer.bettergui.config.impl.MessageConfig;
 import me.hsgamer.bettergui.npcopener.InteractiveNPC;
+import me.hsgamer.bettergui.npcopener.Main;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.command.CommandSender;
@@ -31,31 +31,26 @@ public class Set extends BukkitCommand {
   @Override
   public boolean execute(CommandSender sender, String s, String[] args) {
     if (!(sender instanceof Player)) {
-      sendMessage(sender,
-          getInstance().getMessageConfig().get(DefaultMessage.PLAYER_ONLY));
+      sendMessage(sender, MessageConfig.PLAYER_ONLY.getValue());
       return false;
     }
     if (!sender.hasPermission(PERMISSION)) {
-      sendMessage(sender,
-          getInstance().getMessageConfig().get(DefaultMessage.NO_PERMISSION));
+      sendMessage(sender, MessageConfig.NO_PERMISSION.getValue());
       return false;
     }
 
     if (args.length <= 0) {
-      sendMessage(sender,
-          getInstance().getMessageConfig().get(DefaultMessage.MENU_REQUIRED));
+      sendMessage(sender, MessageConfig.MENU_REQUIRED.getValue());
       return false;
     }
 
     NPC npc = CitizensAPI.getDefaultNPCSelector().getSelected(sender);
     if (npc == null) {
-      sendMessage(sender, getInstance().getMessageConfig()
-          .get(String.class, "npc-required", "&cYou need to select an NPC"));
+      sendMessage(sender, Main.NPC_REQUIRED.getValue());
       return false;
     }
     if (getStorage().contains(npc.getId())) {
-      sendMessage(sender, getInstance().getMessageConfig()
-          .get(String.class, "npc-already-set", "&cThe NPC is already set"));
+      sendMessage(sender, Main.NPC_ALREADY_SET.getValue());
       return false;
     }
 
@@ -70,8 +65,7 @@ public class Set extends BukkitCommand {
     } else {
       getStorage().set(interactiveNPC, args[0]);
     }
-    sendMessage(sender, getInstance().getMessageConfig()
-        .get(DefaultMessage.SUCCESS));
+    sendMessage(sender, MessageConfig.SUCCESS.getValue());
 
     return true;
   }
