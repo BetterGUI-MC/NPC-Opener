@@ -1,13 +1,12 @@
 package me.hsgamer.bettergui.npcopener;
 
-import static me.hsgamer.bettergui.BetterGUI.getInstance;
-
 import java.util.Map;
 import java.util.Optional;
+import me.hsgamer.bettergui.BetterGUI;
 import me.hsgamer.bettergui.config.impl.MessageConfig;
 import me.hsgamer.bettergui.util.CommonUtils;
+import net.citizensnpcs.api.event.NPCClickEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
-import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,34 +14,17 @@ import org.bukkit.event.Listener;
 public class NPCListener implements Listener {
 
   @EventHandler
-  public void onLeftClick(NPCLeftClickEvent event) {
+  public void onLeftClick(NPCClickEvent event) {
     Player player = event.getClicker();
     int id = event.getNPC().getId();
-    Optional<Map.Entry<InteractiveNPC, String>> optional = Main.getStorage().getLeftMenu(id);
+    Optional<Map.Entry<InteractiveNPC, String>> optional = event instanceof NPCLeftClickEvent ?
+        Main.getStorage().getLeftMenu(id) : Main.getStorage().getRightMenu(id);
     if (optional.isPresent()) {
       Map.Entry<InteractiveNPC, String> entry = optional.get();
       String menu = entry.getValue();
-      if (getInstance().getMenuManager().contains(menu)) {
+      if (BetterGUI.getInstance().getMenuManager().contains(menu)) {
         event.setCancelled(true);
-        getInstance().getMenuManager()
-            .openMenu(menu, player, entry.getKey().getArgs(), false);
-      } else {
-        CommonUtils.sendMessage(player, MessageConfig.MENU_NOT_FOUND.getValue());
-      }
-    }
-  }
-
-  @EventHandler
-  public void onRightClick(NPCRightClickEvent event) {
-    Player player = event.getClicker();
-    int id = event.getNPC().getId();
-    Optional<Map.Entry<InteractiveNPC, String>> optional = Main.getStorage().getRightMenu(id);
-    if (optional.isPresent()) {
-      Map.Entry<InteractiveNPC, String> entry = optional.get();
-      String menu = entry.getValue();
-      if (getInstance().getMenuManager().contains(menu)) {
-        event.setCancelled(true);
-        getInstance().getMenuManager()
+        BetterGUI.getInstance().getMenuManager()
             .openMenu(menu, player, entry.getKey().getArgs(), false);
       } else {
         CommonUtils.sendMessage(player, MessageConfig.MENU_NOT_FOUND.getValue());
