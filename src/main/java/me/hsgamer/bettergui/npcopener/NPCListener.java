@@ -3,8 +3,8 @@ package me.hsgamer.bettergui.npcopener;
 import java.util.Map;
 import java.util.Optional;
 import me.hsgamer.bettergui.BetterGUI;
-import me.hsgamer.bettergui.config.impl.MessageConfig;
-import me.hsgamer.bettergui.util.CommonUtils;
+import me.hsgamer.bettergui.config.MessageConfig;
+import me.hsgamer.bettergui.util.MessageUtils;
 import net.citizensnpcs.api.event.NPCClickEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import org.bukkit.entity.Player;
@@ -27,7 +27,7 @@ public class NPCListener implements Listener {
         BetterGUI.getInstance().getMenuManager()
             .openMenu(menu, player, entry.getKey().getArgs(), false);
       } else {
-        CommonUtils.sendMessage(player, MessageConfig.MENU_NOT_FOUND.getValue());
+        MessageUtils.sendMessage(player, MessageConfig.MENU_NOT_FOUND.getValue());
       }
     }
   }

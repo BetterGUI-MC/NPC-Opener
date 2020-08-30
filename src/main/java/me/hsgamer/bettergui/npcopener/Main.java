@@ -1,16 +1,16 @@
 package me.hsgamer.bettergui.npcopener;
 
-import me.hsgamer.bettergui.config.ConfigPath;
 import me.hsgamer.bettergui.npcopener.command.Remove;
 import me.hsgamer.bettergui.npcopener.command.Set;
 import me.hsgamer.bettergui.object.addon.Addon;
+import me.hsgamer.bettergui.util.config.path.StringConfigPath;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 public final class Main extends Addon {
 
-  public static final ConfigPath<String> NPC_REQUIRED = new ConfigPath<>(String.class,
+  public static final StringConfigPath NPC_REQUIRED = new StringConfigPath(
       "npc-required", "&cYou need to select an NPC");
-  public static final ConfigPath<String> NPC_ALREADY_SET = new ConfigPath<>(String.class,
+  public static final StringConfigPath NPC_ALREADY_SET = new StringConfigPath(
       "npc-already-set", "&cThe NPC is already set");
   private static NPCStorage storage;
 

@@ -1,12 +1,12 @@
 package me.hsgamer.bettergui.npcopener.command;
 
 import static me.hsgamer.bettergui.npcopener.Main.getStorage;
-import static me.hsgamer.bettergui.util.CommonUtils.sendMessage;
+import static me.hsgamer.bettergui.util.MessageUtils.sendMessage;
 
 import java.util.Collections;
-import me.hsgamer.bettergui.Permissions;
-import me.hsgamer.bettergui.config.impl.MessageConfig;
+import me.hsgamer.bettergui.config.MessageConfig;
 import me.hsgamer.bettergui.npcopener.Main;
+import me.hsgamer.bettergui.util.PermissionUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.command.CommandSender;
@@ -17,7 +17,7 @@ import org.bukkit.permissions.PermissionDefault;
 
 public class Remove extends BukkitCommand {
 
-  private static final Permission PERMISSION = Permissions
+  private static final Permission PERMISSION = PermissionUtils
       .createPermission("bettergui.removenpcmenu", null, PermissionDefault.OP);
 
   public Remove() {
