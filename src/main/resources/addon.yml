@@ -2,5 +2,5 @@ name: ${project.name}
 version: ${project.version}
 main: ${project.mainClass}
 description: ${project.description}
-authors: ["HSGamer"]
-plugin-depend: ["Citizens"]
+authors: [ "HSGamer" ]
+plugin-depend: [ "Citizens" ]
