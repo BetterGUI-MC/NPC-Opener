@@ -3,7 +3,9 @@ package me.hsgamer.bettergui.npcopener;
 import me.hsgamer.bettergui.api.addon.BetterGUIAddon;
 import me.hsgamer.bettergui.lib.simpleyaml.configuration.ConfigurationSection;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class NPCStorage {
 
@@ -16,43 +18,37 @@ public class NPCStorage {
         load();
     }
 
-    @SuppressWarnings("unchecked")
     public void load() {
         npcToLeftMenuMap.clear();
         npcToRightMenuMap.clear();
         if (addon.getConfig().isSet("left")) {
             ConfigurationSection section = addon.getConfig().getConfigurationSection("left");
-            section.getKeys(false).forEach(
-                    s -> section.getMapList(s)
-                            .forEach(map -> npcToLeftMenuMap.put(InteractiveNPC.deserialize(
-                                    (Map<String, Object>) map), s + ".yml")));
+            section.getKeys(false).forEach(s -> section.getConfigurationSection(s).getValues(false).forEach((s1, o) -> {
+                InteractiveNPC npc = new InteractiveNPC(Integer.parseInt(s1));
+                npc.setArgs(String.valueOf(o).split(" "));
+                npcToLeftMenuMap.put(npc, s + ".yml");
+            }));
         }
         if (addon.getConfig().isSet("right")) {
             ConfigurationSection section = addon.getConfig().getConfigurationSection("right");
-            section.getKeys(false).forEach(
-                    s -> section.getMapList(s)
-                            .forEach(map -> npcToRightMenuMap.put(InteractiveNPC.deserialize(
-                                    (Map<String, Object>) map), s + ".yml")));
+            section.getKeys(false).forEach(s -> section.getConfigurationSection(s).getValues(false).forEach((s1, o) -> {
+                InteractiveNPC npc = new InteractiveNPC(Integer.parseInt(s1));
+                npc.setArgs(String.valueOf(o).split(" "));
+                npcToRightMenuMap.put(npc, s + ".yml");
+            }));
         }
     }
 
     public void save() {
-        Map<String, List<Map<String, Object>>> map = new HashMap<>();
+        addon.getConfig().getKeys(false).forEach(s -> addon.getConfig().set(s, null));
         npcToLeftMenuMap.forEach((npc, s) -> {
-            s = "left." + s.replace(".yml", "");
-            map.putIfAbsent(s, new ArrayList<>());
-            map.get(s).add(npc.serialize());
+            s = "left." + s.replace(".yml", "") + "." + npc.getId();
+            addon.getConfig().set(s, String.join(" ", npc.getArgs()));
         });
         npcToRightMenuMap.forEach((npc, s) -> {
-            s = "right." + s.replace(".yml", "");
-            map.putIfAbsent(s, new ArrayList<>());
-            map.get(s).add(npc.serialize());
+            s = "right." + s.replace(".yml", "") + "." + npc.getId();
+            addon.getConfig().set(s, String.join(" ", npc.getArgs()));
         });
-
-        // Clear old config
-        addon.getConfig().getKeys(false).forEach(s -> addon.getConfig().set(s, null));
-
-        map.forEach((s, list) -> addon.getConfig().set(s, list));
         addon.saveConfig();
     }
 
@@ -87,12 +83,10 @@ public class NPCStorage {
     }
 
     public Optional<Map.Entry<InteractiveNPC, String>> getLeftMenu(int id) {
-        return npcToLeftMenuMap.entrySet().stream().filter(entry -> entry.getKey().getId() == id)
-                .findFirst();
+        return npcToLeftMenuMap.entrySet().stream().filter(entry -> entry.getKey().getId() == id).findFirst();
     }
 
     public Optional<Map.Entry<InteractiveNPC, String>> getRightMenu(int id) {
-        return npcToRightMenuMap.entrySet().stream().filter(entry -> entry.getKey().getId() == id)
-                .findFirst();
+        return npcToRightMenuMap.entrySet().stream().filter(entry -> entry.getKey().getId() == id).findFirst();
     }
 }

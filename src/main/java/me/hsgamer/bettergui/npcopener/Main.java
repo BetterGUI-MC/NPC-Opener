@@ -2,7 +2,6 @@ package me.hsgamer.bettergui.npcopener;
 
 import me.hsgamer.bettergui.api.addon.BetterGUIAddon;
 import me.hsgamer.bettergui.lib.core.config.path.StringConfigPath;
-import me.hsgamer.bettergui.lib.simpleyaml.configuration.serialization.ConfigurationSerialization;
 import me.hsgamer.bettergui.npcopener.command.Remove;
 import me.hsgamer.bettergui.npcopener.command.Set;
 
@@ -22,7 +21,6 @@ public final class Main extends BetterGUIAddon {
 
     @Override
     public boolean onLoad() {
-        ConfigurationSerialization.registerClass(InteractiveNPC.class);
         setupConfig();
         registerListener(new NPCListener());
         NPC_REQUIRED.setConfig(getInstance().getMessageConfig());
