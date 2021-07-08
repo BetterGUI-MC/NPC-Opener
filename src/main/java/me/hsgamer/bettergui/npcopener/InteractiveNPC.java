@@ -1,11 +1,9 @@
 package me.hsgamer.bettergui.npcopener;
 
-import me.hsgamer.bettergui.lib.simpleyaml.configuration.serialization.ConfigurationSerializable;
-
 import java.util.HashMap;
 import java.util.Map;
 
-public class InteractiveNPC implements ConfigurationSerializable {
+public class InteractiveNPC {
 
     private final int id;
     private String[] args = new String[0];
@@ -34,7 +32,6 @@ public class InteractiveNPC implements ConfigurationSerializable {
         this.args = args;
     }
 
-    @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);

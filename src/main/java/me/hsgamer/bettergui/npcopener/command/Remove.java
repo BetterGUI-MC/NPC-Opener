@@ -1,7 +1,6 @@
 package me.hsgamer.bettergui.npcopener.command;
 
 import me.hsgamer.bettergui.config.MessageConfig;
-import me.hsgamer.bettergui.lib.core.bukkit.utils.PermissionUtils;
 import me.hsgamer.bettergui.npcopener.Main;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -18,23 +17,22 @@ import static me.hsgamer.bettergui.npcopener.Main.getStorage;
 
 public class Remove extends BukkitCommand {
 
-    private static final Permission PERMISSION = PermissionUtils
-            .createPermission("bettergui.removenpcmenu", null, PermissionDefault.OP);
+    private static final Permission PERMISSION = new Permission("bettergui.removenpcmenu", PermissionDefault.OP);
 
     public Remove() {
         super("removenpcmenu", "Remove the binding to the menu",
                 "/removenpcmenu [leftClick] [rightClick]", Collections
                         .singletonList("rnm"));
+        setPermission(PERMISSION.getName());
     }
 
     @Override
     public boolean execute(CommandSender sender, String s, String[] args) {
-        if (!(sender instanceof Player)) {
-            sendMessage(sender, MessageConfig.PLAYER_ONLY.getValue());
+        if (!testPermission(sender)) {
             return false;
         }
-        if (!sender.hasPermission(PERMISSION)) {
-            sendMessage(sender, MessageConfig.NO_PERMISSION.getValue());
+        if (!(sender instanceof Player)) {
+            sendMessage(sender, MessageConfig.PLAYER_ONLY.getValue());
             return false;
         }
 

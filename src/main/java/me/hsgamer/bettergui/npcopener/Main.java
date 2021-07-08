@@ -9,10 +9,8 @@ import static me.hsgamer.bettergui.BetterGUI.getInstance;
 
 public final class Main extends BetterGUIAddon {
 
-    public static final StringConfigPath NPC_REQUIRED = new StringConfigPath(
-            "npc-required", "&cYou need to select an NPC");
-    public static final StringConfigPath NPC_ALREADY_SET = new StringConfigPath(
-            "npc-already-set", "&cThe NPC is already set");
+    public static final StringConfigPath NPC_REQUIRED = new StringConfigPath("npc-required", "&cYou need to select an NPC");
+    public static final StringConfigPath NPC_ALREADY_SET = new StringConfigPath("npc-already-set", "&cThe NPC is already set");
     private static NPCStorage storage;
 
     public static NPCStorage getStorage() {
@@ -25,7 +23,7 @@ public final class Main extends BetterGUIAddon {
         registerListener(new NPCListener());
         NPC_REQUIRED.setConfig(getInstance().getMessageConfig());
         NPC_ALREADY_SET.setConfig(getInstance().getMessageConfig());
-        getInstance().getMessageConfig().saveConfig();
+        getInstance().getMessageConfig().save();
         return true;
     }
 
