@@ -1,5 +1,6 @@
 package me.hsgamer.bettergui.npcopener.command;
 
+import me.hsgamer.bettergui.Permissions;
 import me.hsgamer.bettergui.config.MessageConfig;
 import me.hsgamer.bettergui.npcopener.Main;
 import net.citizensnpcs.api.CitizensAPI;
@@ -17,7 +18,7 @@ import static me.hsgamer.bettergui.npcopener.Main.getStorage;
 
 public class Remove extends BukkitCommand {
 
-    private static final Permission PERMISSION = new Permission("bettergui.removenpcmenu", PermissionDefault.OP);
+    private static final Permission PERMISSION = new Permission(Permissions.PREFIX + ".removenpcmenu", PermissionDefault.OP);
 
     public Remove() {
         super("removenpcmenu", "Remove the binding to the menu",

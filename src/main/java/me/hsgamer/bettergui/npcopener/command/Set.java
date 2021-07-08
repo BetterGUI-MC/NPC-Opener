@@ -1,5 +1,6 @@
 package me.hsgamer.bettergui.npcopener.command;
 
+import me.hsgamer.bettergui.Permissions;
 import me.hsgamer.bettergui.config.MessageConfig;
 import me.hsgamer.bettergui.npcopener.InteractiveNPC;
 import me.hsgamer.bettergui.npcopener.Main;
@@ -19,7 +20,7 @@ import static me.hsgamer.bettergui.npcopener.Main.getStorage;
 
 public class Set extends BukkitCommand {
 
-    private static final Permission PERMISSION = new Permission("bettergui.setnpcmenu", PermissionDefault.OP);
+    private static final Permission PERMISSION = new Permission(Permissions.PREFIX + ".setnpcmenu", PermissionDefault.OP);
 
     public Set() {
         super("setnpcmenu", "Bind a menu to an NPC",
