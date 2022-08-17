@@ -1,48 +1,60 @@
 package me.hsgamer.bettergui.npcopener;
 
-import me.hsgamer.bettergui.api.addon.BetterGUIAddon;
-import me.hsgamer.bettergui.lib.core.config.path.StringConfigPath;
 import me.hsgamer.bettergui.npcopener.command.Remove;
 import me.hsgamer.bettergui.npcopener.command.Set;
+import me.hsgamer.hscore.bukkit.addon.PluginAddon;
+import me.hsgamer.hscore.bukkit.config.BukkitConfig;
+import me.hsgamer.hscore.config.Config;
+import org.bukkit.event.HandlerList;
+
+import java.io.File;
 
 import static me.hsgamer.bettergui.BetterGUI.getInstance;
 
-public final class Main extends BetterGUIAddon {
+public final class Main extends PluginAddon {
 
-    public static final StringConfigPath NPC_REQUIRED = new StringConfigPath("npc-required", "&cYou need to select an NPC");
-    public static final StringConfigPath NPC_ALREADY_SET = new StringConfigPath("npc-already-set", "&cThe NPC is already set");
-    private static NPCStorage storage;
-
-    public static NPCStorage getStorage() {
-        return storage;
-    }
-
-    @Override
-    public boolean onLoad() {
-        setupConfig();
-        registerListener(new NPCListener());
-        NPC_REQUIRED.setConfig(getInstance().getMessageConfig());
-        NPC_ALREADY_SET.setConfig(getInstance().getMessageConfig());
-        getInstance().getMessageConfig().save();
-        return true;
-    }
+    private final ExtraMessageConfig messageConfig = new ExtraMessageConfig(new BukkitConfig(new File(getDataFolder(), "messages.yml")));
+    private final Config config = new BukkitConfig(new File(getDataFolder(), "config.yml"));
+    private final NPCStorage storage = new NPCStorage(this);
+    private final Set set = new Set(this);
+    private final Remove remove = new Remove(this);
+    private final NPCListener listener = new NPCListener(this);
 
     @Override
     public void onEnable() {
-        storage = new NPCStorage(this);
-        registerCommand(new Set());
-        registerCommand(new Remove());
+        messageConfig.setup();
+        config.setup();
+        storage.load();
+        getInstance().registerListener(listener);
+        getInstance().registerCommand(set);
+        getInstance().registerCommand(remove);
     }
 
     @Override
     public void onDisable() {
         storage.save();
+        HandlerList.unregisterAll(listener);
+        getInstance().getCommandManager().unregister(set);
+        getInstance().getCommandManager().unregister(remove);
     }
 
     @Override
     public void onReload() {
         storage.save();
-        reloadConfig();
+        config.reload();
+        messageConfig.reload();
         storage.load();
+    }
+
+    public Config getConfig() {
+        return config;
+    }
+
+    public ExtraMessageConfig getMessageConfig() {
+        return messageConfig;
+    }
+
+    public NPCStorage getStorage() {
+        return storage;
     }
 }

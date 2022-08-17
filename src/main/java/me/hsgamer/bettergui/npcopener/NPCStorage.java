@@ -1,7 +1,6 @@
 package me.hsgamer.bettergui.npcopener;
 
-import me.hsgamer.bettergui.api.addon.BetterGUIAddon;
-import me.hsgamer.bettergui.lib.core.config.Config;
+import me.hsgamer.hscore.config.Config;
 
 import java.util.*;
 
@@ -9,18 +8,17 @@ public class NPCStorage {
 
     private final Map<InteractiveNPC, String> npcToLeftMenuMap = new HashMap<>();
     private final Map<InteractiveNPC, String> npcToRightMenuMap = new HashMap<>();
-    private final BetterGUIAddon addon;
+    private final Main main;
 
-    public NPCStorage(BetterGUIAddon addon) {
-        this.addon = addon;
-        load();
+    public NPCStorage(Main main) {
+        this.main = main;
     }
 
     @SuppressWarnings("unchecked")
     public void load() {
         npcToLeftMenuMap.clear();
         npcToRightMenuMap.clear();
-        Config config = addon.getConfig();
+        Config config = main.getConfig();
         config.getNormalizedValues("left", false).forEach((k, v) -> {
             if (!(v instanceof List)) {
                 return;
@@ -55,10 +53,10 @@ public class NPCStorage {
         });
 
         // Clear old config
-        addon.getConfig().getKeys(false).forEach(addon.getConfig()::remove);
+        main.getConfig().getKeys(false).forEach(main.getConfig()::remove);
 
-        map.forEach((s, list) -> addon.getConfig().set(s, list));
-        addon.saveConfig();
+        map.forEach((s, list) -> main.getConfig().set(s, list));
+        main.getConfig().save();
     }
 
     public void set(InteractiveNPC npc, String menu, boolean leftClick, boolean rightClick) {

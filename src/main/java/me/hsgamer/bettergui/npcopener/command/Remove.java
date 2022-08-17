@@ -1,7 +1,6 @@
 package me.hsgamer.bettergui.npcopener.command;
 
 import me.hsgamer.bettergui.Permissions;
-import me.hsgamer.bettergui.config.MessageConfig;
 import me.hsgamer.bettergui.npcopener.Main;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -13,17 +12,19 @@ import org.bukkit.permissions.PermissionDefault;
 
 import java.util.Collections;
 
-import static me.hsgamer.bettergui.lib.core.bukkit.utils.MessageUtils.sendMessage;
-import static me.hsgamer.bettergui.npcopener.Main.getStorage;
+import static me.hsgamer.bettergui.BetterGUI.getInstance;
+import static me.hsgamer.hscore.bukkit.utils.MessageUtils.sendMessage;
 
 public class Remove extends BukkitCommand {
 
     private static final Permission PERMISSION = new Permission(Permissions.PREFIX + ".removenpcmenu", PermissionDefault.OP);
+    private final Main main;
 
-    public Remove() {
+    public Remove(Main main) {
         super("removenpcmenu", "Remove the binding to the menu",
                 "/removenpcmenu [leftClick] [rightClick]", Collections
                         .singletonList("rnm"));
+        this.main = main;
         setPermission(PERMISSION.getName());
     }
 
@@ -33,24 +34,23 @@ public class Remove extends BukkitCommand {
             return false;
         }
         if (!(sender instanceof Player)) {
-            sendMessage(sender, MessageConfig.PLAYER_ONLY.getValue());
+            sendMessage(sender, getInstance().getMessageConfig().playerOnly);
             return false;
         }
 
         NPC npc = CitizensAPI.getDefaultNPCSelector().getSelected(sender);
-        if (npc != null) {
-            int id = npc.getId();
-            if (args.length >= 2) {
-                getStorage().remove(id, Boolean.parseBoolean(args[0]),
-                        Boolean.parseBoolean(args[1]));
-            } else {
-                getStorage().remove(id);
-            }
-            sendMessage(sender, MessageConfig.SUCCESS.getValue());
-        } else {
-            sendMessage(sender, Main.NPC_REQUIRED.getValue());
+        if (npc == null) {
+            sendMessage(sender, main.getMessageConfig().npcRequired);
             return false;
         }
+        int id = npc.getId();
+        if (args.length >= 2) {
+            main.getStorage().remove(id, Boolean.parseBoolean(args[0]),
+                    Boolean.parseBoolean(args[1]));
+        } else {
+            main.getStorage().remove(id);
+        }
+        sendMessage(sender, getInstance().getMessageConfig().success);
         return true;
     }
 }

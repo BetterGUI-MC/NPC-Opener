@@ -1,7 +1,6 @@
 package me.hsgamer.bettergui.npcopener.command;
 
 import me.hsgamer.bettergui.Permissions;
-import me.hsgamer.bettergui.config.MessageConfig;
 import me.hsgamer.bettergui.npcopener.InteractiveNPC;
 import me.hsgamer.bettergui.npcopener.Main;
 import net.citizensnpcs.api.CitizensAPI;
@@ -15,17 +14,19 @@ import org.bukkit.permissions.PermissionDefault;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static me.hsgamer.bettergui.lib.core.bukkit.utils.MessageUtils.sendMessage;
-import static me.hsgamer.bettergui.npcopener.Main.getStorage;
+import static me.hsgamer.bettergui.BetterGUI.getInstance;
+import static me.hsgamer.hscore.bukkit.utils.MessageUtils.sendMessage;
 
 public class Set extends BukkitCommand {
 
     private static final Permission PERMISSION = new Permission(Permissions.PREFIX + ".setnpcmenu", PermissionDefault.OP);
+    private final Main main;
 
-    public Set() {
+    public Set(Main main) {
         super("setnpcmenu", "Bind a menu to an NPC",
                 "/setnpcmenu <menu> [leftClick] [rightClick] [args]",
                 Collections.singletonList("snm"));
+        this.main = main;
         setPermission(PERMISSION.getName());
     }
 
@@ -35,22 +36,22 @@ public class Set extends BukkitCommand {
             return false;
         }
         if (!(sender instanceof Player)) {
-            sendMessage(sender, MessageConfig.PLAYER_ONLY.getValue());
+            sendMessage(sender, getInstance().getMessageConfig().playerOnly);
             return false;
         }
 
         if (args.length <= 0) {
-            sendMessage(sender, MessageConfig.MENU_REQUIRED.getValue());
+            sendMessage(sender, getInstance().getMessageConfig().menuRequired);
             return false;
         }
 
         NPC npc = CitizensAPI.getDefaultNPCSelector().getSelected(sender);
         if (npc == null) {
-            sendMessage(sender, Main.NPC_REQUIRED.getValue());
+            sendMessage(sender, main.getMessageConfig().npcRequired);
             return false;
         }
-        if (getStorage().contains(npc.getId())) {
-            sendMessage(sender, Main.NPC_ALREADY_SET.getValue());
+        if (main.getStorage().contains(npc.getId())) {
+            sendMessage(sender, main.getMessageConfig().npcAlreadySet);
             return false;
         }
 
@@ -59,13 +60,13 @@ public class Set extends BukkitCommand {
             interactiveNPC.setArgs(Arrays.copyOfRange(args, 3, args.length));
         }
         if (args.length >= 3) {
-            getStorage()
+            main.getStorage()
                     .set(interactiveNPC, args[0], Boolean.parseBoolean(args[1]),
                             Boolean.parseBoolean(args[2]));
         } else {
-            getStorage().set(interactiveNPC, args[0]);
+            main.getStorage().set(interactiveNPC, args[0]);
         }
-        sendMessage(sender, MessageConfig.SUCCESS.getValue());
+        sendMessage(sender, getInstance().getMessageConfig().success);
 
         return true;
     }
