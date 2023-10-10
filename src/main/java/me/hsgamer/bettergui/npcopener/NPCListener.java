@@ -6,6 +6,7 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.Map;
 import java.util.Optional;
@@ -51,5 +52,14 @@ public class NPCListener implements Listener {
                 MessageUtils.sendMessage(player, getInstance().getMessageConfig().menuNotFound);
             }
         }
+    }
+
+    @EventHandler
+    public void onOperatorJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        if (!player.isOp()) return;
+        MessageUtils.sendMessage(player, "&cYou are seeing this message because the addon is deprecated & planned to be removed.", "&e[NPC-Opener@BetterGUI] ");
+        MessageUtils.sendMessage(player, "&cPlease use Citizens NPC Commands instead.", "&e[NPC-Opener@BetterGUI] ");
+        MessageUtils.sendMessage(player, "&bTo convert the data, please use &e/convertnpcmenu", "&e[NPC-Opener@BetterGUI] ");
     }
 }

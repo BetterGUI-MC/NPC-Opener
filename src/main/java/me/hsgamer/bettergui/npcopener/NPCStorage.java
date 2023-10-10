@@ -96,4 +96,12 @@ public class NPCStorage {
     public Optional<Map.Entry<InteractiveNPC, String>> getRightMenu(int id) {
         return npcToRightMenuMap.entrySet().stream().filter(entry -> entry.getKey().getId() == id).findFirst();
     }
+
+    public Map<InteractiveNPC, String> getNpcToLeftMenuMap() {
+        return npcToLeftMenuMap;
+    }
+
+    public Map<InteractiveNPC, String> getNpcToRightMenuMap() {
+        return npcToRightMenuMap;
+    }
 }

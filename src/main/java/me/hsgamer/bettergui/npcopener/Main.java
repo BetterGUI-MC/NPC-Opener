@@ -12,22 +12,25 @@ import java.io.File;
 import static me.hsgamer.bettergui.BetterGUI.getInstance;
 
 public final class Main extends PluginAddon {
-
-    private final ExtraMessageConfig messageConfig = new ExtraMessageConfig(new BukkitConfig(new File(getDataFolder(), "messages.yml")));
     private final Config config = new BukkitConfig(new File(getDataFolder(), "config.yml"));
     private final NPCStorage storage = new NPCStorage(this);
-    private final Set set = new Set(this);
-    private final Remove remove = new Remove(this);
+    private final Set set = new Set();
+    private final Remove remove = new Remove();
     private final NPCListener listener = new NPCListener(this);
 
     @Override
     public void onEnable() {
-        messageConfig.setup();
         config.setup();
         storage.load();
         getInstance().registerListener(listener);
         getInstance().registerCommand(set);
         getInstance().registerCommand(remove);
+    }
+
+    @Override
+    public void onPostEnable() {
+        getLogger().warning("This addon is deprecated. Please use Citizens NPC Commands instead.");
+        getLogger().warning("To convert the data, please use /convertnpcmenu");
     }
 
     @Override
@@ -42,16 +45,11 @@ public final class Main extends PluginAddon {
     public void onReload() {
         storage.save();
         config.reload();
-        messageConfig.reload();
         storage.load();
     }
 
     public Config getConfig() {
         return config;
-    }
-
-    public ExtraMessageConfig getMessageConfig() {
-        return messageConfig;
     }
 
     public NPCStorage getStorage() {
