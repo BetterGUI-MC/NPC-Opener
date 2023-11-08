@@ -1,8 +1,6 @@
-package me.hsgamer.bettergui.npcopener.command;
+package me.hsgamer.bettergui.npcopener;
 
 import me.hsgamer.bettergui.Permissions;
-import me.hsgamer.bettergui.npcopener.InteractiveNPC;
-import me.hsgamer.bettergui.npcopener.Main;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.CommandTrait;

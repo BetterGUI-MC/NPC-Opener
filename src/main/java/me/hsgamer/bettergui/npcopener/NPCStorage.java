@@ -1,6 +1,7 @@
 package me.hsgamer.bettergui.npcopener;
 
 import me.hsgamer.hscore.config.Config;
+import me.hsgamer.hscore.config.PathString;
 
 import java.util.*;
 
@@ -19,38 +20,32 @@ public class NPCStorage {
         npcToLeftMenuMap.clear();
         npcToRightMenuMap.clear();
         Config config = main.getConfig();
-        config.getNormalizedValues("left", false).forEach((k, v) -> {
+        config.getNormalizedValues(new PathString("left"), false).forEach((k, v) -> {
             if (!(v instanceof List)) {
                 return;
             }
             ((List<?>) v).forEach(o -> {
                 if (o instanceof Map) {
-                    npcToLeftMenuMap.put(InteractiveNPC.deserialize((Map<String, Object>) o), k + ".yml");
+                    npcToLeftMenuMap.put(InteractiveNPC.deserialize((Map<String, Object>) o), PathString.toPath(k) + ".yml");
                 }
             });
         });
-        config.getNormalizedValues("right", false).forEach((k, v) -> {
+        config.getNormalizedValues(new PathString("right"), false).forEach((k, v) -> {
             if (!(v instanceof List)) {
                 return;
             }
             ((List<?>) v).forEach(o -> {
                 if (o instanceof Map) {
-                    npcToRightMenuMap.put(InteractiveNPC.deserialize((Map<String, Object>) o), k + ".yml");
+                    npcToRightMenuMap.put(InteractiveNPC.deserialize((Map<String, Object>) o), PathString.toPath(k) + ".yml");
                 }
             });
         });
     }
 
     public void save() {
-        Map<String, List<Map<String, Object>>> map = new HashMap<>();
-        npcToLeftMenuMap.forEach((npc, s) -> {
-            s = "left." + s.replace(".yml", "");
-            map.computeIfAbsent(s, s1 -> new ArrayList<>()).add(npc.serialize());
-        });
-        npcToRightMenuMap.forEach((npc, s) -> {
-            s = "right." + s.replace(".yml", "");
-            map.computeIfAbsent(s, s1 -> new ArrayList<>()).add(npc.serialize());
-        });
+        Map<PathString, List<Map<String, Object>>> map = new HashMap<>();
+        npcToLeftMenuMap.forEach((npc, s) -> map.computeIfAbsent(new PathString("left", s.replace(".yml", "")), s1 -> new ArrayList<>()).add(npc.serialize()));
+        npcToRightMenuMap.forEach((npc, s) -> map.computeIfAbsent(new PathString("right", s.replace(".yml", "")), s1 -> new ArrayList<>()).add(npc.serialize()));
 
         // Clear old config
         main.getConfig().getKeys(false).forEach(main.getConfig()::remove);
